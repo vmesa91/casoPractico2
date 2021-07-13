@@ -1,0 +1,7 @@
+---
+
+- name: deploy kubernetes
+  hosts: all
+  gather_facts: false
+  roles:
+    - configuration-initial

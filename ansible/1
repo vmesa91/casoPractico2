@@ -1,0 +1,27 @@
+---
+
+- name: Set timezone to Europe/Madrid
+  timezone:
+    name: Europe/Madrid
+  become: yes
+
+- name: install chronyd
+  dnf:
+    name: chronyd
+    state: absent
+  become: yes
+
+- name: Ensure chronyd is active
+  service:
+    name: chronyd
+    state: started
+  become: yes
+
+- name: Disabled SELinux
+  lineinfile:
+    path: /etc/selinux/config
+    search_string: 'SELINUX=enforcing'
+    line: SELINUX=disabled
+    owner: root
+    group: root
+    mode: '0644'

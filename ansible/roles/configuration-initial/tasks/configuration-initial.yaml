@@ -1,0 +1,45 @@
+---
+
+- name: Set timezone to Europe/Madrid
+  timezone:
+    name: Europe/Madrid
+  become: yes
+
+- name: Install chronyd
+  dnf:
+    name: chrony
+    state: present
+  become: yes
+
+- name: Ensure chronyd is active
+  service:
+    name: chronyd
+    state: started
+  become: yes
+
+- name: Disabled SELinux
+  lineinfile:
+    path: /etc/selinux/config
+    regex: 'SELINUX=enforcing'
+    line: 'SELINUX=disabled'
+    state: present
+    backup: yes
+  become: yes
+
+- name: Install nfs-utils
+  dnf:
+    name: nfs-utils
+    state: present
+  become: yes   
+
+- name: Install nfs4-acl-tools
+  dnf:
+    name: nfs4-acl-tools
+    state: present
+  become: yes 
+
+- name: Install wget
+  dnf:
+    name: wget
+    state: present
+  become: yes
