@@ -1,0 +1,67 @@
+---
+
+- name: Create volume
+  file: 
+    path: /srv/nfs
+    state: directory
+  become: yes
+    
+- name: Install nfs-utils & net-tools
+  dnf: 
+     name: "{{ item }}"
+     state: present
+  become: yes 
+  loop: 
+    - "nfs-utils"
+    - "net-tools"
+    
+- name: Ensure nfs-server is active
+  service:
+    name: nfs-server
+    state: started
+  become: yes
+  
+#- name: Gather facts from db servers
+#  delegate_to: "{{ item }}"
+#  delegate_facts: true
+#  lineinfile: 
+#     path: /etc/exports
+#     state: present
+#     create: yes
+#     line: "/srv/nfs {{hostvars[item].ansible_facts.ansible_all_ipv4_addresses[0]}} (rw,sync)"
+#   loop: "{{ groups['all'] }}"
+   
+- name: Configurate nfs share access
+  lineinfile: 
+    path: /etc/exports
+    state: present
+    create: yes
+    line: "/srv/nfs	{{ master_ip }}(rw,sync)\n/srv/nfs	{{ worker_ip }}(rw,sync)"
+  become: yes
+  
+- name: Re-exports the share
+  command: exportfs -r
+  become: yes
+
+- name: Re-exports the share
+  command: exportfs -s
+  become: yes
+  
+  
+- name: Configurate Firewall
+  firewalld:
+    zone: public 
+    service: "{{ item }}"
+    permanent: yes
+    state: enabled
+  become: yes
+  loop: 
+    - "nfs"
+    - "rpc-bind"
+    - "mountd"
+  
+- name: Reload Firewall
+  become: yes
+  systemd:
+    name: firewalld
+    state: reloaded    
