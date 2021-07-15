@@ -1,0 +1,8 @@
+---
+
+- name: Configuration required in Master & Workers servers
+  hosts: all
+  gather_facts: false
+
+  roles:
+    - commons-tasks

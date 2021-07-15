@@ -1,0 +1,50 @@
+
+- name: Active Firewall
+  systemd:
+    name: firewalld
+    state: started
+    enabled: yes
+  become: yes
+
+- name: Load Bridge Netfilter 
+  modprobe:
+    name: br_netfilter
+    state: present  
+  become: yes
+
+- name: Active Trasparent Masquerade  
+  firewalld:
+    masquerade: yes
+    state: enabled
+    permanent: yes
+  become: yes
+
+- name: Reload Firewall
+  systemd:
+    name: firewalld
+    state: reloaded 
+  become: yes
+
+- name: Manage Traffic with firewall
+  lineinfile: 
+    path: /etc/systctl.d/k8s.conf 
+    state: present
+    create: yes
+    line: "net.bridge.bridge-nf-call-ip6tables = 1\nnet.bridge.bridge-nf-call-iptables = 1"
+  become: yes
+
+- name: Reload system
+  command: sysctl --system
+  become: yes
+
+- name: Disable Swap
+  command: swapoff -a
+  become: yes
+
+- name: Disabled Swap - remove line
+  lineinfile:
+    path: /etc/fstab
+    regex: 'swap'
+    line: ''
+    state: present
+  become: yes
