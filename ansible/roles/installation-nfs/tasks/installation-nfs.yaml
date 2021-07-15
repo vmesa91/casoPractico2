@@ -1,0 +1,13 @@
+---
+
+- name: deploy kubernetes
+  hosts: all
+  
+  vars_files:
+    - "group_vars/installation-nfs.yaml"
+  gather_facts: true
+  
+  roles:
+    - configuration-initial
+    - installation-nfs
+    
