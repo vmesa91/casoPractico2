@@ -1,0 +1,19 @@
+- name: Add Docker repo
+  get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docker-ce.repo
+  become: yes
+
+- name: Install Docker
+  dnf:
+    name: docker-ce-20.10.6-3.el8
+    state: present
+  become: yes
+
+- name: Ensure docker is active
+  service:
+    name: docker
+    state: started
+  become: yes
+
+
