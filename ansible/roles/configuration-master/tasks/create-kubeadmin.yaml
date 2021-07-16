@@ -1,0 +1,13 @@
+ - name: Add the user 'kubeadmin' to manage cluster
+   user:
+     name: kubeadmin
+     password:
+   become: yes
+   
+ - Create directory .kube
+   file: 
+     path: /home/kubeadmin/.kube
+     state: directory
+   become: yes
+ 
+ -  
