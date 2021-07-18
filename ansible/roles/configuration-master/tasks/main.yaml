@@ -1,4 +1,6 @@
 ---
 
 - include_tasks: configuration-master.yaml
-#- include_tasks: create-kubeadmin.yaml
+- include_tasks: create-kubeadmin.yaml
+- include_tasks: installation-sdn.yaml
+- include_tasks: deploy-ingress.yaml

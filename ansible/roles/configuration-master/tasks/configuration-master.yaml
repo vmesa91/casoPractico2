@@ -56,9 +56,20 @@
    command: export KUBECONFIG=/etc/kubernetes/admin.conf
    become: yes
 
+- name: Create directory .kube
+   file: 
+     path: /home/kubeadmin/.kube
+     state: directory
+   become: yes
 
+ - name: Copy admin.conf in our kubeadmin user
+   copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /root/.kube/config
+    owner: root 
+   become: yes
 
-
-
-
+ - name: Change Owner to config file
+   command: chown $(id -u):$(id -g) /root/.kube/config
+   become: yes
 

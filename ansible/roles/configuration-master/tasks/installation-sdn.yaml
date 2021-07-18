@@ -1,0 +1,27 @@
+
+ - name: Install Tigera operator
+   command: kubectl create -f https://docs.projectcalico.org/manifests/tigera-operator.yaml
+   become: yes
+
+ - name: Download definition file
+   command: wget https://docs.projectcalico.org/manifests/custom-resources.yaml
+   become: yes
+
+ - name: Install WGET (Required)
+   dnf:
+    name: wget
+    state: present
+   become: yes 
+
+ - name: Set CICR
+   lineinfile:
+     path: custom-resources.yaml
+     regex: 'cidr: 192.168.0.0/16'
+     line: 'cidr: 192.169.0.0/16'
+     state: present
+     backup: yes
+   become: yes
+
+ - name: Install Calico 
+   command: kubectl apply -f custom-resources.yaml
+   become: yes

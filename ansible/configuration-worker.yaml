@@ -1,0 +1,10 @@
+---
+
+- name: Configuration Master Node
+  hosts: all
+  vars_files:
+    - "group_vars/configuration-master.yaml"
+  gather_facts: true
+  
+  roles:
+    - configuration-worker

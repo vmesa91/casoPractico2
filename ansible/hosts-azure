@@ -1,0 +1,13 @@
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+ansible_user=ansible
+
+[masters]
+Master-azure ansible_connection=local
+    
+[workers]
+Worker01-azure
+Worker02-azure
+    
+[nfs]
+Master-azure ansible_connection=local

@@ -1,0 +1,23 @@
+
+  - name: Allow Network Ports in Firewalld
+    firewalld:
+      port: "{{ item }}"
+      state: enabled
+      permanent: yes
+    loop:
+      - "{10250,30000-32767}/tcp"
+    become: yes
+
+  - name: Reload Firewall
+    systemd:
+      name: firewalld
+      state: reloaded
+    become: yes
+
+  - name: Copying token to worker nodes
+    copy: src={{ token_file }} dest=join_token
+    become:yes 
+
+  - name: Joining worker nodes with kubernetes master
+    command: "`grep -i 'kubeadm join' join_token`"
+    become: yes
