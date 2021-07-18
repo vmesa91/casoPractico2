@@ -1,0 +1,4 @@
+---
+
+- include_tasks: configuration-master.yaml
+#- include_tasks: create-kubeadmin.yaml

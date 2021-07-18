@@ -1,0 +1,27 @@
+
+ - name: Creating 'kubeadmin' user without admin access
+   user:
+     name: "{{ username }}"
+     password: "{{ upassword | password_hash('sha512') }}"
+   become: yes
+  
+ - name: Create directory .kube
+   file: 
+     path: /home/kubeadmin/.kube
+     state: directory
+   become: yes
+
+ - name: Copy admin.conf in our kubeadmin user
+   copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /home/kubeadmin/.kube/config
+    owner: kubeadmin 
+   become: yes  
+
+ - name: Climb privileges for the kubeadmin user
+   lineinfile:
+    path: /etc/sudoers.d/kubeadmin
+    state: present
+    create: yes
+    line: "ALL            ALL = (ALL) NOPASSWD: ALL"
+   become: yes

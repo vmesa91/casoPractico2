@@ -1,0 +1,64 @@
+
+ - name: Allow Network Ports in Firewalld
+   firewalld:
+     port: "{{ item }}"
+     state: enabled
+     permanent: yes
+   loop:
+     - "6443/tcp"
+     - "2379-2380/tcp"
+     - "10250/tcp"
+     - "10251/tcp"
+     - "10252/tcp"
+     - "10255/tcp"
+   become: yes
+
+ - name: Reload Firewall
+   systemd:
+     name: firewalld
+     state: reloaded
+   become: yes
+
+ - name: Pulling images required for setting up a Kubernetes cluster
+   command: kubeadm config images pull
+   become: yes
+
+ - name: Add Rich Rule to allow access from workers
+   firewalld:
+    rich_rule: "{{ item }}"
+    state: enabled
+    permanent: yes
+   loop:
+     - "rule family=ipv4 source address={{ worker_ip }}/32 accept"
+   become: yes
+
+ - name: Reload Firewall
+   systemd:
+     name: firewalld
+     state: reloaded
+   become: yes
+
+ - name: Access to local throw container 
+   debug: 
+     msg: "{{ ansible_facts.docker0.ipv4.network }}"  
+   become: yes 
+
+ - name: Initializing Kubernetes cluster - Install CNI Plugin
+   command: kubeadm init --pod-network-cidr={{pod-network-cidr}}
+   register: output  
+   become: yes
+
+ - name: Storing Logs and Generated token for future purpose.
+   local_action: copy content={{ output.stdout }} dest={{ token_file }}
+   become:yes
+
+ - name: Give root user permissions to execute 'kubectl'
+   command: export KUBECONFIG=/etc/kubernetes/admin.conf
+   become: yes
+
+
+
+
+
+
+
