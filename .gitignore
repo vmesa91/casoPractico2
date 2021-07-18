@@ -1,0 +1,4 @@
+terraform/credentials.tf
+terraform/.terraform*
+terraform/*tfstate*
+
